@@ -21,6 +21,7 @@ type ListItemID = int
 // Declare conformity with interfaces.
 var _ fyne.Widget = (*List)(nil)
 var _ fyne.Focusable = (*List)(nil)
+var _ fyne.Growable = (*List)(nil)
 
 // List is a widget that pools list items for performance and
 // lays the items out in a vertical direction inside of a scroller.
@@ -50,6 +51,7 @@ type List struct {
 	itemHeights   map[ListItemID]float32
 	offsetY       float32
 	offsetUpdated func(fyne.Position)
+	growFactor    float32
 }
 
 // NewList creates and returns a list widget for displaying items in
@@ -384,6 +386,18 @@ func (l *List) contentMinSize() fyne.Size {
 	height += float32(items-totalCustom) * templateHeight
 
 	return fyne.NewSize(l.itemMin.Width, height+separatorThickness*float32(items-1))
+}
+
+func (l *List) MaxSize() fyne.Size {
+	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
+}
+
+func (l *List) GrowFactor() float32 {
+	return l.growFactor
+}
+
+func (l *List) SetGrowFactor(factor float32) {
+	l.growFactor = factor
 }
 
 // fills l.visibleRowHeights and also returns offY and minRow

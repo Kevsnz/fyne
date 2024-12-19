@@ -25,6 +25,7 @@ var _ fyne.Focusable = (*Table)(nil)
 var _ desktop.Hoverable = (*Table)(nil)
 var _ fyne.Tappable = (*Table)(nil)
 var _ fyne.Widget = (*Table)(nil)
+var _ fyne.Growable = (*Table)(nil)
 
 // TableCellID is a type that represents a cell's position in a table based on its row and column location.
 type TableCellID struct {
@@ -101,6 +102,7 @@ type Table struct {
 	top, left, corner, dividerLayer                              *clip
 	hoverHeaderRow, hoverHeaderCol, dragCol, dragRow             int
 	dragStartPos                                                 fyne.Position
+	growFactor                                                   float32
 }
 
 // NewTable returns a new performant table widget defined by the passed functions.
@@ -1029,6 +1031,18 @@ func (t *Table) visibleRowHeights(rowHeight float32, rows int) (visible map[int]
 		}
 	}
 	return
+}
+
+func (t *Table) MaxSize() fyne.Size {
+	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
+}
+
+func (t *Table) GrowFactor() float32 {
+	return t.growFactor
+}
+
+func (t *Table) SetGrowFactor(factor float32) {
+	t.growFactor = factor
 }
 
 // Declare conformity with WidgetRenderer interface.
