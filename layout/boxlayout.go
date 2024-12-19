@@ -60,7 +60,8 @@ func (v vBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	spacers := 0
 	visibleObjects := 0
 	// Size taken up by visible objects
-	total := float32(0)
+	totalMinHights := float32(0)
+	growFactors := float32(0)
 
 	for _, child := range objects {
 		if !child.Visible() {
@@ -73,13 +74,27 @@ func (v vBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 		}
 
 		visibleObjects++
-		total += child.MinSize().Height
+
+		minH := child.MinSize().Height
+		totalMinHights += minH
+		if growable, ok := child.(fyne.Growable); ok {
+			if minH < 1.0 {
+				minH = 1.0
+			}
+			growFactors += growable.GrowFactor() * minH
+		} else {
+			child.Resize(fyne.NewSize(size.Width, minH))
+		}
 	}
 
 	padding := v.paddingFunc()
 
 	// Amount of space not taken up by visible objects and inter-object padding
-	extra := size.Height - total - (padding * float32(visibleObjects-1))
+	extra := size.Height - totalMinHights - (padding * float32(visibleObjects-1))
+	hPerFactor := float32(0)
+	if growFactors > 0.0 {
+		hPerFactor = extra / growFactors
+	}
 
 	// Spacers split extra space equally
 	spacerSize := float32(0)
@@ -100,8 +115,11 @@ func (v vBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 		child.Move(fyne.NewPos(x, y))
 
 		height := child.MinSize().Height
+		if growable, ok := child.(fyne.Growable); ok {
+			height += hPerFactor * growable.GrowFactor() * height
+			child.Resize(fyne.NewSize(size.Width, height))
+		}
 		y += padding + height
-		child.Resize(fyne.NewSize(size.Width, height))
 	}
 }
 
@@ -143,7 +161,8 @@ func (g hBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	spacers := 0
 	visibleObjects := 0
 	// Size taken up by visible objects
-	total := float32(0)
+	totalMinWidths := float32(0)
+	growFactors := float32(0)
 
 	for _, child := range objects {
 		if !child.Visible() {
@@ -156,13 +175,27 @@ func (g hBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 		}
 
 		visibleObjects++
-		total += child.MinSize().Width
+
+		minW := child.MinSize().Width
+		totalMinWidths += minW
+		if growable, ok := child.(fyne.Growable); ok {
+			if minW < 1.0 {
+				minW = 1.0
+			}
+			growFactors += growable.GrowFactor() * minW
+		} else {
+			child.Resize(fyne.NewSize(minW, size.Height))
+		}
 	}
 
 	padding := g.paddingFunc()
 
 	// Amount of space not taken up by visible objects and inter-object padding
-	extra := size.Width - total - (padding * float32(visibleObjects-1))
+	extra := size.Width - totalMinWidths - (padding * float32(visibleObjects-1))
+	wPerFactor := float32(0.0)
+	if growFactors > 0.0 {
+		wPerFactor = extra / growFactors
+	}
 
 	// Spacers split extra space equally
 	spacerSize := float32(0)
@@ -183,8 +216,11 @@ func (g hBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 		child.Move(fyne.NewPos(x, y))
 
 		width := child.MinSize().Width
+		if growable, ok := child.(fyne.Growable); ok {
+			width += wPerFactor * growable.GrowFactor() * width
+			child.Resize(fyne.NewSize(width, size.Height))
+		}
 		x += padding + width
-		child.Resize(fyne.NewSize(width, size.Height))
 	}
 }
 

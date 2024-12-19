@@ -1,16 +1,21 @@
 package fyne
 
-import "sync"
+import (
+	"math"
+	"sync"
+)
 
 // Declare conformity to [CanvasObject]
 var _ CanvasObject = (*Container)(nil)
+var _ Growable = (*Container)(nil)
 
 // Container is a [CanvasObject] that contains a collection of child objects.
 // The layout of the children is set by the specified Layout.
 type Container struct {
-	size     Size     // The current size of the Container
-	position Position // The current position of the Container
-	Hidden   bool     // Is this Container hidden
+	size       Size     // The current size of the Container
+	position   Position // The current position of the Container
+	growFactor float32  // The grow factor of the Container
+	Hidden     bool     // Is this Container hidden
 
 	Layout  Layout // The Layout algorithm for arranging child [CanvasObject]s
 	lock    sync.Mutex
@@ -209,4 +214,16 @@ func repaint(obj *Container) {
 			paint.SetDirty()
 		}
 	}
+}
+
+func (c *Container) MaxSize() Size {
+	return NewSize(math.MaxFloat32, math.MaxFloat32)
+}
+
+func (c *Container) GrowFactor() float32 {
+	return c.growFactor
+}
+
+func (c *Container) SetGrowFactor(factor float32) {
+	c.growFactor = factor
 }

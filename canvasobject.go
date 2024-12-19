@@ -105,3 +105,12 @@ type Tabbable interface {
 type Tappable interface {
 	Tapped(*PointEvent)
 }
+
+// Growable describes any [CanvasObject] that can be grown by the layout manager to fill the available space.
+type Growable interface {
+	MaxSize() Size
+	// GrowFactor is a number used by the layout manager to determine proportions for growing multiple objects.
+	// Typical values include 0.0 for no growing and 1.0 for normal and equal growing.
+	GrowFactor() float32
+	SetGrowFactor(float32)
+}
