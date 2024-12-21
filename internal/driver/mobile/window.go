@@ -141,6 +141,10 @@ func (w *window) Hide() {
 	}
 }
 
+func (w *window) Visible() bool {
+	return w.visible
+}
+
 func (w *window) tryClose() {
 	if w.onCloseIntercepted != nil {
 		w.QueueEvent(w.onCloseIntercepted)

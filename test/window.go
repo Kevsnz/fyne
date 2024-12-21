@@ -152,3 +152,7 @@ func (w *window) ShowAndRun() {
 func (w *window) Title() string {
 	return w.title
 }
+
+func (w *window) Visible() bool {
+	return w.focused
+}

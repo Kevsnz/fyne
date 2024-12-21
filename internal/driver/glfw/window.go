@@ -203,6 +203,10 @@ func (w *window) Hide() {
 	})
 }
 
+func (w *window) Visible() bool {
+	return w.visible
+}
+
 func (w *window) Close() {
 	if w.isClosing() {
 		return
