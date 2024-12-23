@@ -388,6 +388,10 @@ func (l *List) contentMinSize() fyne.Size {
 	return fyne.NewSize(l.itemMin.Width, height+separatorThickness*float32(items-1))
 }
 
+func (l *List) Selected() []ListItemID {
+	return append([]ListItemID{}, l.selected...)
+}
+
 func (l *List) MaxSize() fyne.Size {
 	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
 }

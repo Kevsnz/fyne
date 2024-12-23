@@ -1033,6 +1033,13 @@ func (t *Table) visibleRowHeights(rowHeight float32, rows int) (visible map[int]
 	return
 }
 
+func (t *Table) SelectedCell() *TableCellID {
+	if t.selectedCell == nil {
+		return nil
+	}
+	return &TableCellID{Row: t.selectedCell.Row, Col: t.selectedCell.Col}
+}
+
 func (t *Table) MaxSize() fyne.Size {
 	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
 }
