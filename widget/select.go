@@ -2,6 +2,7 @@ package widget
 
 import (
 	"image/color"
+	"math"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -24,10 +25,11 @@ type Select struct {
 	PlaceHolder string
 	OnChanged   func(string) `json:"-"`
 
-	focused bool
-	hovered bool
-	popUp   *PopUpMenu
-	tapAnim *fyne.Animation
+	focused    bool
+	hovered    bool
+	popUp      *PopUpMenu
+	tapAnim    *fyne.Animation
+	growFactor float32
 }
 
 var _ fyne.Widget = (*Select)(nil)
@@ -35,6 +37,7 @@ var _ desktop.Hoverable = (*Select)(nil)
 var _ fyne.Tappable = (*Select)(nil)
 var _ fyne.Focusable = (*Select)(nil)
 var _ fyne.Disableable = (*Select)(nil)
+var _ fyne.Growable = (*Select)(nil)
 
 // NewSelect creates a new select widget with the set list of options and changes handler
 func NewSelect(options []string, changed func(string)) *Select {
@@ -45,6 +48,18 @@ func NewSelect(options []string, changed func(string)) *Select {
 	}
 	s.ExtendBaseWidget(s)
 	return s
+}
+
+func (s *Select) MaxSize() fyne.Size {
+	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
+}
+
+func (s *Select) GrowFactor() float32 {
+	return s.growFactor
+}
+
+func (s *Select) SetGrowFactor(factor float32) {
+	s.growFactor = factor
 }
 
 // ClearSelected clears the current option of the select widget.  After
