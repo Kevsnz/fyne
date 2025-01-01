@@ -32,11 +32,12 @@ var _ fyne.Growable = (*List)(nil)
 type List struct {
 	BaseWidget
 
-	Length       func() int                                  `json:"-"`
-	CreateItem   func() fyne.CanvasObject                    `json:"-"`
-	UpdateItem   func(id ListItemID, item fyne.CanvasObject) `json:"-"`
-	OnSelected   func(id ListItemID)                         `json:"-"`
-	OnUnselected func(id ListItemID)                         `json:"-"`
+	Length             func() int                                  `json:"-"`
+	CreateItem         func() fyne.CanvasObject                    `json:"-"`
+	UpdateItem         func(id ListItemID, item fyne.CanvasObject) `json:"-"`
+	OnSelected         func(id ListItemID)                         `json:"-"`
+	OnUnselected       func(id ListItemID)                         `json:"-"`
+	OnItemDoubleTapped func(id ListItemID)                         `json:"-"`
 
 	// HideSeparators hides the separators between list rows
 	//
@@ -222,6 +223,26 @@ func (l *List) Select(id ListItemID) {
 			f(old[0])
 		}
 		if f := l.OnSelected; f != nil {
+			f(id)
+		}
+	}()
+	l.scrollTo(id)
+	l.Refresh()
+}
+
+func (l *List) ItemDoubleTap(id ListItemID) {
+	l.Select(id)
+
+	length := 0
+	if f := l.Length; f != nil {
+		length = f()
+	}
+	if id < 0 || id >= length {
+		return
+	}
+
+	defer func() {
+		if f := l.OnItemDoubleTapped; f != nil {
 			f(id)
 		}
 	}()
@@ -516,15 +537,17 @@ type listItem struct {
 	BaseWidget
 
 	onTapped          func()
+	onDoubleTapped    func()
 	background        *canvas.Rectangle
 	child             fyne.CanvasObject
 	hovered, selected bool
 }
 
-func newListItem(child fyne.CanvasObject, tapped func()) *listItem {
+func newListItem(child fyne.CanvasObject, tapped func(), doubleTapped func()) *listItem {
 	li := &listItem{
-		child:    child,
-		onTapped: tapped,
+		child:          child,
+		onTapped:       tapped,
+		onDoubleTapped: doubleTapped,
 	}
 
 	li.ExtendBaseWidget(li)
@@ -574,6 +597,14 @@ func (li *listItem) Tapped(*fyne.PointEvent) {
 		li.selected = true
 		li.Refresh()
 		li.onTapped()
+	}
+}
+
+func (li *listItem) DoubleTapped(*fyne.PointEvent) {
+	if li.onDoubleTapped != nil {
+		li.selected = true
+		li.Refresh()
+		li.onDoubleTapped()
 	}
 }
 
@@ -660,7 +691,7 @@ func (l *listLayout) getItem() *listItem {
 		if f := l.list.CreateItem; f != nil {
 			item2 := createItemAndApplyThemeScope(f, l.list)
 
-			item = newListItem(item2, nil)
+			item = newListItem(item2, nil, nil)
 		}
 	}
 	return item.(*listItem)
@@ -704,6 +735,18 @@ func (l *listLayout) setupListItem(li *listItem, id ListItemID, focus bool) {
 		}
 
 		l.list.Select(id)
+	}
+	li.onDoubleTapped = func() {
+		if !fyne.CurrentDevice().IsMobile() {
+			canvas := fyne.CurrentApp().Driver().CanvasForObject(l.list)
+			if canvas != nil {
+				canvas.Focus(l.list)
+			}
+
+			l.list.currentFocus = id
+		}
+
+		l.list.ItemDoubleTap(id)
 	}
 }
 
