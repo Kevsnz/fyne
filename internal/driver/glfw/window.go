@@ -644,14 +644,14 @@ func (w *window) mouseClickedHandleTapDoubleTap(co fyne.CanvasObject, ev *fyne.P
 			return
 		}
 		go w.waitForDoubleTap(co, ev)
-	} else {
-		w.mouseLock.Lock()
-		if wid, ok := co.(fyne.Tappable); ok && co == w.mousePressed {
-			w.QueueEvent(func() { wid.Tapped(ev) })
-		}
-		w.mousePressed = nil
-		w.mouseLock.Unlock()
 	}
+
+	w.mouseLock.Lock()
+	if wid, ok := co.(fyne.Tappable); ok && co == w.mousePressed {
+		w.QueueEvent(func() { wid.Tapped(ev) })
+	}
+	w.mousePressed = nil
+	w.mouseLock.Unlock()
 }
 
 func (w *window) waitForDoubleTap(co fyne.CanvasObject, ev *fyne.PointEvent) {
@@ -669,10 +669,6 @@ func (w *window) waitForDoubleTap(co fyne.CanvasObject, ev *fyne.PointEvent) {
 	if w.mouseClickCount == 2 && w.mouseLastClick == co {
 		if wid, ok := co.(fyne.DoubleTappable); ok {
 			w.QueueEvent(func() { wid.DoubleTapped(ev) })
-		}
-	} else if co == w.mousePressed {
-		if wid, ok := co.(fyne.Tappable); ok {
-			w.QueueEvent(func() { wid.Tapped(ev) })
 		}
 	}
 
