@@ -2,6 +2,7 @@ package widget
 
 import (
 	"image/color"
+	"math"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
@@ -46,6 +47,7 @@ const (
 )
 
 var _ fyne.Focusable = (*Button)(nil)
+var _ fyne.Growable = (*Button)(nil)
 
 // Button widget has a text label and triggers an event func when clicked
 type Button struct {
@@ -63,6 +65,7 @@ type Button struct {
 
 	hovered, focused bool
 	tapAnim          *fyne.Animation
+	growFactor       float32
 }
 
 // NewButton creates a new button widget with the set label and tap handler
@@ -216,6 +219,23 @@ func (b *Button) tapAnimation() {
 	if fyne.CurrentApp().Settings().ShowAnimations() {
 		b.tapAnim.Start()
 	}
+}
+
+func (b *Button) MaxSize() fyne.Size {
+	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
+}
+
+func (b *Button) GrowFactor() float32 {
+	return b.growFactor
+}
+
+func (b *Button) SetGrowFactor(factor float32) {
+	b.growFactor = factor
+}
+
+func (b *Button) WithGrowFactor(factor float32) *Button {
+	b.growFactor = factor
+	return b
 }
 
 type buttonRenderer struct {
