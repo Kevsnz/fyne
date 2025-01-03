@@ -43,9 +43,10 @@ type Entry struct {
 	shortcut fyne.ShortcutHandler
 	Text     string
 	// Since: 2.0
-	TextStyle   fyne.TextStyle
-	PlaceHolder string
-	OnChanged   func(string) `json:"-"`
+	TextStyle     fyne.TextStyle
+	TextAlignment fyne.TextAlign
+	PlaceHolder   string
+	OnChanged     func(string) `json:"-"`
 	// Since: 2.0
 	OnSubmitted func(string) `json:"-"`
 	Password    bool
@@ -1454,7 +1455,9 @@ func (e *Entry) textProvider() *RichText {
 
 	e.text.Scroll = widget.ScrollNone
 	e.text.inset = fyne.NewSize(0, e.themeWithLock().Size(theme.SizeNameInputBorder))
-	e.text.Segments = []RichTextSegment{&TextSegment{Style: RichTextStyleInline, Text: e.Text}}
+	style := RichTextStyleInline
+	style.Alignment = e.TextAlignment
+	e.text.Segments = []RichTextSegment{&TextSegment{Style: style, Text: e.Text}}
 	return &e.text
 }
 
