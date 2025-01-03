@@ -93,6 +93,7 @@ func (v vBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	extra := size.Height - totalMinHights - (padding * float32(visibleObjects-1))
 	hPerFactor := float32(0)
 	if growFactors > 0.0 {
+		spacers = 0
 		hPerFactor = extra / growFactors
 	}
 
@@ -194,6 +195,7 @@ func (g hBoxLayout) Layout(objects []fyne.CanvasObject, size fyne.Size) {
 	extra := size.Width - totalMinWidths - (padding * float32(visibleObjects-1))
 	wPerFactor := float32(0.0)
 	if growFactors > 0.0 {
+		spacers = 0
 		wPerFactor = extra / growFactors
 	}
 
