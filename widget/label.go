@@ -183,3 +183,8 @@ func (l *Label) GrowFactor() float32 {
 func (l *Label) SetGrowFactor(factor float32) {
 	l.growFactor = factor
 }
+
+func (l *Label) WithGrowFactor(factor float32) *Label {
+	l.growFactor = factor
+	return l
+}
