@@ -1,6 +1,8 @@
 package widget
 
 import (
+	"math"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/data/binding"
 	"fyne.io/fyne/v2/theme"
@@ -25,6 +27,8 @@ type Label struct {
 
 	provider *RichText
 	binder   basicBinder
+
+	growFactor float32
 }
 
 // NewLabel creates a new label widget with the set text content
@@ -166,4 +170,16 @@ func (l *Label) updateFromData(data binding.DataItem) {
 		return
 	}
 	l.SetText(val)
+}
+
+func (l *Label) MaxSize() fyne.Size {
+	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
+}
+
+func (l *Label) GrowFactor() float32 {
+	return l.growFactor
+}
+
+func (l *Label) SetGrowFactor(factor float32) {
+	l.growFactor = factor
 }

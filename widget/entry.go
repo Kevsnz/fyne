@@ -35,6 +35,7 @@ var _ desktop.Keyable = (*Entry)(nil)
 var _ mobile.Keyboardable = (*Entry)(nil)
 var _ mobile.Touchable = (*Entry)(nil)
 var _ fyne.Tabbable = (*Entry)(nil)
+var _ fyne.Growable = (*Entry)(nil)
 
 // Entry widget allows simple text to be input when focused.
 type Entry struct {
@@ -106,6 +107,8 @@ type Entry struct {
 	// doubleTappedAtUnixMillis stores the time the entry was last DoubleTapped
 	// used for deciding whether the next MouseDown/TouchDown is a triple-tap or not
 	doubleTappedAtUnixMillis int64
+
+	growFactor float32
 }
 
 // NewEntry creates a new single line entry widget.
@@ -1647,6 +1650,18 @@ func (e *Entry) setFieldsAndRefresh(f func()) {
 		return
 	}
 	impl.Refresh()
+}
+
+func (c *Entry) MaxSize() fyne.Size {
+	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
+}
+
+func (c *Entry) GrowFactor() float32 {
+	return c.growFactor
+}
+
+func (c *Entry) SetGrowFactor(factor float32) {
+	c.growFactor = factor
 }
 
 var _ fyne.WidgetRenderer = (*entryRenderer)(nil)
