@@ -227,3 +227,8 @@ func (c *Container) GrowFactor() float32 {
 func (c *Container) SetGrowFactor(factor float32) {
 	c.growFactor = factor
 }
+
+func (c *Container) WithGrowFactor(factor float32) *Container {
+	c.growFactor = factor
+	return c
+}

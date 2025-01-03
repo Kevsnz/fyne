@@ -1052,6 +1052,11 @@ func (t *Table) SetGrowFactor(factor float32) {
 	t.growFactor = factor
 }
 
+func (t *Table) WithGrowFactor(factor float32) *Table {
+	t.growFactor = factor
+	return t
+}
+
 // Declare conformity with WidgetRenderer interface.
 var _ fyne.WidgetRenderer = (*tableRenderer)(nil)
 

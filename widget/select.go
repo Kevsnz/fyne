@@ -62,6 +62,11 @@ func (s *Select) SetGrowFactor(factor float32) {
 	s.growFactor = factor
 }
 
+func (s *Select) WithGrowFactor(factor float32) *Select {
+	s.growFactor = factor
+	return s
+}
+
 // ClearSelected clears the current option of the select widget.  After
 // clearing the current option, the Select widget's PlaceHolder will
 // be displayed.

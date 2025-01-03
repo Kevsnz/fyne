@@ -425,6 +425,11 @@ func (l *List) SetGrowFactor(factor float32) {
 	l.growFactor = factor
 }
 
+func (l *List) WithGrowFactor(factor float32) *List {
+	l.growFactor = factor
+	return l
+}
+
 // fills l.visibleRowHeights and also returns offY and minRow
 func (l *listLayout) calculateVisibleRowHeights(itemHeight float32, length int, th fyne.Theme) (offY float32, minRow int) {
 	rowOffset := float32(0)

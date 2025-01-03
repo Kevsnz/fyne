@@ -1655,16 +1655,21 @@ func (e *Entry) setFieldsAndRefresh(f func()) {
 	impl.Refresh()
 }
 
-func (c *Entry) MaxSize() fyne.Size {
+func (e *Entry) MaxSize() fyne.Size {
 	return fyne.NewSize(math.MaxFloat32, math.MaxFloat32)
 }
 
-func (c *Entry) GrowFactor() float32 {
-	return c.growFactor
+func (e *Entry) GrowFactor() float32 {
+	return e.growFactor
 }
 
-func (c *Entry) SetGrowFactor(factor float32) {
-	c.growFactor = factor
+func (e *Entry) SetGrowFactor(factor float32) {
+	e.growFactor = factor
+}
+
+func (e *Entry) WithGrowFactor(factor float32) *Entry {
+	e.growFactor = factor
+	return e
 }
 
 var _ fyne.WidgetRenderer = (*entryRenderer)(nil)
